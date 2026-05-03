@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego de Multiplicación</title>
+
+<style>
+    body {
+        background: black;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    h1 {
+        font-size: 50px;
+        margin-bottom: 30px;
+    }
+
+    #pregunta {
+        font-size: 40px;
+        margin-bottom: 20px;
+    }
+
+    #respuesta {
+        font-size: 30px;
+        padding: 10px;
+        width: 150px;
+        text-align: center;
+        background: black;
+        color: white;
+        border: 2px solid white;
+        outline: none;
+    }
+
+    #resultado {
+        font-size: 25px;
+        margin-top: 20px;
+    }
+
+    #puntaje {
+        margin-top: 20px;
+        font-size: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>JUEGO DE MULTIPLICACIÓN</h1>
+
+<p id="pregunta"></p>
+
+<input type="number" id="respuesta" placeholder="?" autofocus>
+
+<p id="resultado"></p>
+
+<p id="puntaje">✅ Correctas: 0 | ❌ Incorrectas: 0</p>
+
+<script>
+let tablas = [6, 7, 8, 9];
+let num1, num2, correcto;
+let inicio;
+
+let correctas = 0;
+let incorrectas = 0;
+let erroresSeguidos = 0;
+
+function nuevaPregunta() {
+    num1 = tablas[Math.floor(Math.random() * tablas.length)];
+    num2 = Math.floor(Math.random() * 10) + 1;
+    correcto = num1 * num2;
+
+    document.getElementById("pregunta").textContent = "¿Cuánto es " + num1 + " x " + num2 + "?";
+    document.getElementById("resultado").textContent = "";
+    document.getElementById("respuesta").value = "";
+
+    inicio = Date.now();
+}
+
+function actualizarPuntaje() {
+    document.getElementById("puntaje").textContent =
+        "✅ Correctas: " + correctas + " | ❌ Incorrectas: " + incorrectas;
+}
+
+function reiniciarJuego() {
+    correctas = 0;
+    incorrectas = 0;
+    erroresSeguidos = 0;
+    actualizarPuntaje();
+}
+
+function verificar() {
+    let fin = Date.now();
+    let tiempo = (fin - inicio) / 1000;
+
+    let resp = parseInt(document.getElementById("respuesta").value);
+
+    if (tiempo > 20) {
+        document.getElementById("resultado").textContent =
+            "⏰ Tiempo agotado. Respuesta: " + correcto;
+        incorrectas++;
+        erroresSeguidos++;
+    } else if (resp === correcto) {
+        document.getElementById("resultado").textContent = "✅ Correcto";
+        correctas++;
+        erroresSeguidos = 0;
+    } else {
+        document.getElementById("resultado").textContent =
+            "❌ Incorrecto. Respuesta: " + correcto;
+        incorrectas++;
+        erroresSeguidos++;
+    }
+
+    actualizarPuntaje();
+
+    if (erroresSeguidos >= 3) {
+        document.getElementById("resultado").textContent =
+            "💀 Desaprobaste (3 errores seguidos). Reiniciando...";
+        
+        setTimeout(() => {
+            reiniciarJuego();
+            nuevaPregunta();
+        }, 2000);
+    } else {
+        setTimeout(nuevaPregunta, 1500);
+    }
+}
+
+document.getElementById("respuesta").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        verificar();
+    }
+});
+
+nuevaPregunta();
+</script>
+
+</body>
+</html>
